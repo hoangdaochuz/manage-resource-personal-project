@@ -1,0 +1,59 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User{
+  id Int @id @default(autoincrement())
+  email String @unique
+  username String @unique
+  password String?
+  isActive Boolean
+  isVerified Boolean
+  isDeleted Boolean
+  deleteAt DateTime?
+  refreshToken String?
+  loginType String?
+  workspaces Workspace[]
+  projects Project[]
+  teams Team[]
+}
+
+model Workspace{
+  id Int @id @default(autoincrement())
+  name String
+  owner Int  //
+  order Int @default(autoincrement())
+  projects Project[]
+  teams Team[]
+  user User @relation(fields: [owner], references: [id])
+}
+
+model Project{
+  id Int @id @default(autoincrement())
+  name String
+  description String?
+  owner Int   //
+  order Int @default(autoincrement())
+  workspaceId Int
+  workspace Workspace @relation(fields: [workspaceId], references: [id])
+  user User @relation(fields: [owner], references: [id])
+}
+
+model Team{
+  id Int @id @default(autoincrement())
+  name String
+  owner Int //
+  order Int @default(autoincrement())
+  memberIds Int[]
+  workspaceId Int
+  workspace Workspace @relation(fields: [workspaceId], references: [id])
+  user User @relation(fields: [owner],references: [id])
+}

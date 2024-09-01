@@ -1,0 +1,50 @@
+version: "3.8"
+
+services:
+  postgres:
+    image: postgres:latest
+    restart: always
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+    volumes:
+      - postgres:/var/lib/postgresql/data
+    ports:
+      - "5454:5432"
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: backend
+    environment:
+      - DATABASE_URL=postgresql://admin:admin@postgres:5432/manage-resource-db
+      - GOOGLE_CLIENT_ID
+      - GOOGLE_CLIENT_SECRET
+      - GOOGLE_REDIRECT_URI=http://localhost:5173/auth/google-redirect
+      - JWT_ACCESS_SECRET=H5ekFDLuXynjNYxt7h+z15XnayJxhcUe9WeFhviyMQZBK8bj9XF+x4X3+LNdLFnkCQ9r3f7GsLfuCBeS+nbFm93fbI1YcNzuAwrNB/Gprk2rCrbvavVvOHaZBAQAdI3xnU+PP6EsuILtjco8eoM0FRNP45usAsL4/u8vFdBSPepe5UiYwCpVW0FMOOk/k4su0YUb4xcqJQH69NaxZK/RqVm7iNyZa7GVw03TXj1G4UT6iwoVi2sbvcDabs5MSCmZmkKIVVZ/zR3P/u9nFBpNWYOa363NPS3MMyshdQMxqYKaxEDJhuO9n8XPm6QNQYDJwn6bAhHlK2Av454bal9pqw==
+      - JWT_REFRESH_SECRET=A2NV6kE+vmXd9fu/rhUjlw7vLNs8jjJRqFocOVntL0Fq5faO9ashxGnIxDlSAAqd2CF6EQj9BawsQdnHiSPI+jCon0KzANTm+j+7HKHk81Fw+yd0fJJ25LSXAkKqvrxOsR4ginHbLDp3BX5A2AXfuopa1aRPDLERz/7IM0+HkrIf4hszJYQuzfHqOdz10XvG/Nrpufr5t5ic8+ZGdjCC+OIEIlzuT5LYVVcZw+sI3co5TdlUx8ZSVOkQZTlgn3KXhIvfpW+MwdpAIOyvXd77gdVLSQbyFI+M2UpcqtsWMBnXm1+5Wppt3LN1qgvRuvS0cUYO7kIu0h43tcgU9QRVSA==
+    ports:
+      - "3003:3000" # Map port 3003 on host to port 3000 in the container
+    volumes:
+      - ./backend/src:/app/src
+    depends_on:
+      - postgres
+
+  frontend:
+    build: ./frontend
+    environment:
+      - VITE_API_PORT=3003
+      - VITE_AUTH_ENDPOINT=http://localhost:3003/api/v1/auth
+      - VITE_BASE_URL=http://localhost:3003
+    ports:
+      - "5173:5173" # Map port 5173 on host to port 5173 in the container
+    volumes:
+      - ./frontend/src:/app/src
+    stdin_open: true
+    tty: true
+    depends_on:
+      - backend
+
+volumes:
+  postgres:
