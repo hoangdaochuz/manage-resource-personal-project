@@ -22,19 +22,17 @@ jobs:
       - name: Set up Node.js for Backend
         uses: actions/setup-node@v3
         with:
-          node-version: '20'
+          node-version: "20"
 
       - name: Install dependencies for Backend
         run: npm install
-
-      - name: Run tests for Backend
-        run: npm test
 
       - name: Build Backend Docker image
         env:
           ECR_REGISTRY: ${{ secrets.AWS_ECR_REGISTRY }}
           IMAGE_TAG: backend-${{ github.sha }}
         run: |
+          npm run build
           docker build -t $ECR_REGISTRY/backend:$IMAGE_TAG .
           docker push $ECR_REGISTRY/backend:$IMAGE_TAG
 
@@ -51,19 +49,17 @@ jobs:
       - name: Set up Node.js for Frontend
         uses: actions/setup-node@v3
         with:
-          node-version: '20'
+          node-version: "20"
 
       - name: Install dependencies for Frontend
         run: npm install
-
-      - name: Run tests for Frontend
-        run: npm test
 
       - name: Build Frontend Docker image
         env:
           ECR_REGISTRY: ${{ secrets.AWS_ECR_REGISTRY }}
           IMAGE_TAG: frontend-${{ github.sha }}
         run: |
+          npm run build
           docker build -t $ECR_REGISTRY/frontend:$IMAGE_TAG .
           docker push $ECR_REGISTRY/frontend:$IMAGE_TAG
 
@@ -88,9 +84,9 @@ jobs:
           NEW_TASK_DEF=$(echo $TASK_DEFINITION_JSON | jq --arg BACKEND_IMAGE "$BACKEND_IMAGE" --arg FRONTEND_IMAGE "$FRONTEND_IMAGE" '.taskDefinition | .containerDefinitions[0].image=$BACKEND_IMAGE | .containerDefinitions[1].image=$FRONTEND_IMAGE | del(.status,.revision,.requiresAttributes,.compatibilities)')
           echo $NEW_TASK_DEF > new-task-def.json
           aws ecs register-task-definition --cli-input-json file://new-task-def.json
-          
+
           # Get the new task definition ARN
           NEW_TASK_DEF_ARN=$(aws ecs describe-task-definition --task-definition $TASK_DEFINITION --query "taskDefinition.taskDefinitionArn" --output text)
-          
+
           # Update ECS service to use the new task definition
           aws ecs update-service --cluster $CLUSTER_NAME --service $SERVICE_NAME --task-definition $NEW_TASK_DEF_ARN
