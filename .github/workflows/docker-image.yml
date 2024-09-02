@@ -32,10 +32,10 @@ jobs:
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-      - name: Create Frontend ECR repository if not exists
+      - name: Create Backend ECR repository if not exists
         run: |
-          aws ecr describe-repositories --repository-names frontend --region ${{ secrets.AWS_REGION }} || \
-          aws ecr create-repository --repository-name frontend --region ${{ secrets.AWS_REGION }}
+          aws ecr describe-repositories --repository-names backend --region ${{ secrets.AWS_REGION }} || \
+          aws ecr create-repository --repository-name backend --region ${{ secrets.AWS_REGION }}
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
