@@ -105,14 +105,21 @@ jobs:
           FRONTEND_IMAGE: ${{ secrets.AWS_ECR_REGISTRY }}/frontend:frontend-${{ github.sha }}
           TASK_DEFINITION: ${{ secrets.ECS_TASK_DEFINITION }}
         run: |
-          # Update ECS service with new task definitions
+          # Get the current task definition
           TASK_DEFINITION_JSON=$(aws ecs describe-task-definition --task-definition $TASK_DEFINITION)
-          NEW_TASK_DEF=$(echo $TASK_DEFINITION_JSON | jq --arg BACKEND_IMAGE "$BACKEND_IMAGE" --arg FRONTEND_IMAGE "$FRONTEND_IMAGE" '.taskDefinition | .containerDefinitions[0].image=$BACKEND_IMAGE | .containerDefinitions[1].image=$FRONTEND_IMAGE | del(.status,.revision,.requiresAttributes,.compatibilities)')
-          echo $NEW_TASK_DEF > new-task-def.json
-          aws ecs register-task-definition --cli-input-json file://new-task-def.json
 
-          # Get the new task definition ARN
-          NEW_TASK_DEF_ARN=$(aws ecs describe-task-definition --task-definition $TASK_DEFINITION --query "taskDefinition.taskDefinitionArn" --output text)
+          # Modify the task definition to update container images
+          NEW_TASK_DEF=$(echo $TASK_DEFINITION_JSON | jq --arg BACKEND_IMAGE "$BACKEND_IMAGE" --arg FRONTEND_IMAGE "$FRONTEND_IMAGE" \
+            '.taskDefinition |
+            .containerDefinitions[0].image=$BACKEND_IMAGE |
+            .containerDefinitions[1].image=$FRONTEND_IMAGE |
+            {family: .family, taskRoleArn: .taskRoleArn, executionRoleArn: .executionRoleArn, networkMode: .networkMode, containerDefinitions: .containerDefinitions, volumes: .volumes, placementConstraints: .placementConstraints, requiresCompatibilities: .requiresCompatibilities, cpu: .cpu, memory: .memory, tags: .tags, pidMode: .pidMode, ipcMode: .ipcMode, proxyConfiguration: .proxyConfiguration, inferenceAccelerators: .inferenceAccelerators, ephemeralStorage: .ephemeralStorage, runtimePlatform: .runtimePlatform}')
 
-          # Update ECS service to use the new task definition
+          # Save the new task definition to a file
+          echo "$NEW_TASK_DEF" > new-task-def.json
+
+          # Register the new task definition
+          NEW_TASK_DEF_ARN=$(aws ecs register-task-definition --cli-input-json file://new-task-def.json --query "taskDefinition.taskDefinitionArn" --output text)
+
+          # Update the ECS service with the new task definition
           aws ecs update-service --cluster $CLUSTER_NAME --service $SERVICE_NAME --task-definition $NEW_TASK_DEF_ARN
