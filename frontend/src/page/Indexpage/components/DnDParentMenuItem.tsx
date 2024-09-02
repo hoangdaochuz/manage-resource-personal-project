@@ -33,7 +33,7 @@ const DnDParentMenuItem: FC<DnDParentMenuItemProps> = ({ item, index }) => {
 
   return (
     // key, dragganleId must be unique. Don't use index for key props, It will cause a error when dragging. Just using key for key props
-    <Draggable key={item.key} draggableId={`${item.id}`} index={index} type="blockList">
+    <Draggable key={item.key} draggableId={`${item.id}`} index={index}>
       {(provider, snapshot) => {
         return (
           <div

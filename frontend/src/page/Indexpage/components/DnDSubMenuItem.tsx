@@ -33,7 +33,7 @@ const DnDSubMenuItem: FC<DnDSubMenuItemProps> = ({ item, index, parentIndex }) =
     ...draggableStyle,
   });
   return (
-    <Draggable key={`${parentIndex}-${item.key}`} draggableId={`${parentIndex}-${item.id}`} index={index} type="block">
+    <Draggable key={`${parentIndex}-${item.key}`} draggableId={`${parentIndex}-${item.id}`} index={index}>
       {(provider, snapshot) => {
         return (
           <div

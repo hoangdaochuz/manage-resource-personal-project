@@ -23,7 +23,7 @@ function App() {
   }, [dispatch]);
   return (
     <div>
-      {/* <Button
+      <Button
         onClick={() => {
           dispatch(logoutThunk());
           setIsAuthen(null);
@@ -31,7 +31,7 @@ function App() {
       >
         Logout
       </Button>
-      <Button>Fetch My Profile</Button> */}
+      <Button>Fetch My Profile</Button>
       <IndexPage />
     </div>
   );

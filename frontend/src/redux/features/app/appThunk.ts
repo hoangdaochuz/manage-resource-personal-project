@@ -3,7 +3,7 @@ import { userApi } from "../../../services";
 import { setUserInfo } from "../auth/authSlice";
 import { getMyWorkspaces } from "../workspace/workspaceThunk";
 
-export const initApp = createAsyncThunk("app/init", async (data, { rejectWithValue, dispatch }) => {
+export const initApp = createAsyncThunk("app/init", async (_, { rejectWithValue, dispatch }) => {
   try {
     const userId = localStorage.getItem("userId");
     const accessToken = localStorage.getItem("accessToken");

@@ -10,6 +10,9 @@ type EditWorkspaceModalProps = {
   setOpen: (arg: boolean) => void;
   workspaceId: number;
 };
+type UpdateSpacePayload = {
+  spacename: string;
+};
 
 const EditWorkspaceModal: FC<EditWorkspaceModalProps> = ({ isOpen, setOpen, workspaceId }) => {
   const dispatch = useAppDispatch();
@@ -24,7 +27,7 @@ const EditWorkspaceModal: FC<EditWorkspaceModalProps> = ({ isOpen, setOpen, work
     form.setFieldValue("spacename", currentWorkspace?.name);
   }, [form, currentWorkspace]);
 
-  const handleUpdateSpace = (data: object) => {
+  const handleUpdateSpace = (data: UpdateSpacePayload) => {
     dispatch(
       updateWorkspace({
         owner: currentUser?.id,

@@ -40,7 +40,7 @@ export const signinThunk = createAsyncThunk("auth/signin", async (data: object, 
   }
 });
 
-export const logoutThunk = createAsyncThunk("auth/logout", async (data, { dispatch, getState }) => {
+export const logoutThunk = createAsyncThunk("auth/logout", async (_, { dispatch, getState }) => {
   try {
     const rootState = getState() as RootState;
     const user = rootState.auth.user;
@@ -57,7 +57,7 @@ export const logoutThunk = createAsyncThunk("auth/logout", async (data, { dispat
   }
 });
 
-export const loginWithGoogle = createAsyncThunk("auth/loginGoogle", async (data, { rejectWithValue }) => {
+export const loginWithGoogle = createAsyncThunk("auth/loginGoogle", async (_, { rejectWithValue }) => {
   try {
     const res = await authApi.loginWithGoogle();
     console.log(res.data);

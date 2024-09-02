@@ -15,7 +15,7 @@ export const appSlice = createSlice({
     builder.addCase(initApp.pending, (state) => {
       state.loading = true;
     });
-    builder.addCase(initApp.fulfilled, (state, action) => {
+    builder.addCase(initApp.fulfilled, (state) => {
       state.loading = false;
     });
     builder.addCase(initApp.rejected, (state) => {
