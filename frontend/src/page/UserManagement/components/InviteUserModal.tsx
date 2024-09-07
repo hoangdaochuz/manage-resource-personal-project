@@ -18,10 +18,15 @@ const InviteUserModal = () => {
   const classes = useStyles();
   const dispatch = useAppDispatch();
   const setState = (obj: Partial<ModalState>) => _setState((prev) => ({ ...prev, ...obj }));
-  const { email: emailFrom } = useAppSelector((state) => state.auth.user);
+  const { user } = useAppSelector((state) => state.auth);
+  const emailFrom = user?.email || "";
   const handleInviteUser = async (data: { email: string }) => {
     try {
       setState({ loading: true });
+      if (!emailFrom || !data.email) {
+        toast.error("Please input email fully");
+        return;
+      }
       await dispatch(inviteUserToWorkspaceThunk({ emailFrom, emailTo: data.email })).unwrap();
       setState({ loading: false });
       toast.success("Invite user successfully");
