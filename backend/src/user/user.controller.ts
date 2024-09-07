@@ -7,14 +7,16 @@ import {
   ParseIntPipe,
   Patch,
   Post,
-  UseGuards,
+  // UseGuards,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { UserEntity } from './entities/user.entity';
-import { AccessTokenGuard } from 'src/auth/guard/accessToken.guard';
+// import { AccessTokenGuard } from 'src/auth/guard/accessToken.guard';
+import { InviteUserDto } from './dto/invite-user.dto';
+// import { EmailService } from 'src/email/email.service';
 
 @Controller('api/v1/user')
 @ApiTags('User')
@@ -59,5 +61,12 @@ export class UserController {
   // @UseGuards(AccessTokenGuard)
   deleteUserById(@Param('id', ParseIntPipe) id: number) {
     return this.userService.deleteUserById(id);
+  }
+
+  @ApiOkResponse()
+  @Post('/invite')
+  inviteUser(@Body() inviteUserDto: InviteUserDto) {
+    const { emailTo, emailFrom } = inviteUserDto;
+    return this.userService.inviteUserToWorkspace(emailTo, emailFrom);
   }
 }

@@ -1,5 +1,10 @@
 import { MailerService } from '@nestjs-modules/mailer';
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  forwardRef,
+  Inject,
+  Injectable,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { UserService } from 'src/user/user.service';
 
@@ -8,6 +13,7 @@ export class EmailService {
   constructor(
     private mailerService: MailerService,
     private jwtService: JwtService,
+    @Inject(forwardRef(() => UserService))
     private userService: UserService,
   ) {}
 
@@ -25,6 +31,21 @@ export class EmailService {
       </p>
       
       <p>If you did not request this email you can safely ignore it.</p>
+      `,
+    });
+  }
+
+  async sendInviteUserMessage(emailTo: string, emailFrom: string) {
+    const url = `http://localhost:5173/login`;
+    await this.mailerService.sendMail({
+      from: '"Support Team" <hyvong2805@gmail.com>',
+      to: emailTo,
+      subject: 'Welcome to Clickup App',
+      html: `
+        <p>You are invited to join the Workspace on ClickUp by ${emailFrom}</p>
+        <p>
+          <a href='${url}'>Join now!</a>
+        </p>
       `,
     });
   }

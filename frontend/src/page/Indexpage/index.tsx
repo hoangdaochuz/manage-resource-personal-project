@@ -10,19 +10,22 @@ import {
   UserOutlined,
   AppstoreOutlined,
 } from "@ant-design/icons";
-import { Avatar, Breadcrumb, Image, Layout, Menu, Popover, Tooltip } from "antd";
+import { Avatar, Image, Layout, Menu, Popover, Tooltip } from "antd";
 import Sider from "antd/es/layout/Sider";
 import { Content, Footer, Header } from "antd/es/layout/layout";
 import { ItemType, MenuItemType } from "antd/es/menu/hooks/useItems";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { createUseStyles } from "react-jss";
 import SpaceControlPopover from "./components/SpaceControlPopover";
 import SearchSpace from "./components/SearchSpace";
 import AddWorkspaceModal from "../../components/modals/AddWorkspaceModal";
 import CreateFolderModal from "../../components/modals/CreateFolderModal";
 import DnDMenu, { CreateFolderData } from "./components/DnDMenu";
-import { useAppDispatch } from "../../redux/hooks";
+import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import { logoutThunk } from "../../redux/features/auth/authThunk";
+import { useNavigate } from "react-router-dom";
+import PopupSpaceMenu from "./components/PopupSpaceMenu";
+import UserManagement from "../UserManagement";
 
 const IndexPage = () => {
   const [searchSpace, setSearchSpace] = useState(false);
@@ -35,6 +38,16 @@ const IndexPage = () => {
   const [toggleOpenSpaceMenu, setToggleOpenSpaceMenu] = useState<boolean>(false);
   const classes = useStyles();
   const dispatch = useAppDispatch();
+  const spaceIconRef = useRef(null);
+
+  const navigate = useNavigate();
+  const { user } = useAppSelector((state) => state.auth);
+  const [isAuthen, setIsAuthen] = useState(localStorage.getItem("accessToken"));
+  useEffect(() => {
+    if (!user && !isAuthen) {
+      navigate("/login", { replace: true });
+    }
+  }, [user, isAuthen, navigate]);
 
   const _items = [
     {
@@ -133,7 +146,7 @@ const IndexPage = () => {
       case "timesheet":
         return <div>Timesheets</div>;
       case "user":
-        return <div>User</div>;
+        return <UserManagement />;
       case "team":
         return <div>Teams</div>;
       case "files":
@@ -180,64 +193,29 @@ const IndexPage = () => {
 
         {collapsed && (
           <Tooltip placement="right" title="Spaces">
-            <div className={classes.collapseIconContainer} onClick={() => setToggleOpenSpaceMenu((prev) => !prev)}>
+            <div
+              className={classes.collapseIconContainer}
+              onClick={() => setToggleOpenSpaceMenu((prev) => !prev)}
+              ref={spaceIconRef}
+            >
               <AppstoreOutlined style={{ fontSize: "16px" }} />
             </div>
           </Tooltip>
         )}
       </Sider>
       {collapsed && toggleOpenSpaceMenu && (
-        <div className={classes.menuAfterCollapseContainer}>
-          {!searchSpace ? (
-            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-              <h1>Spaces</h1>
-              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "0 10px" }}>
-                <span
-                  style={{
-                    display: "inline-block",
-                    cursor: "pointer",
-                  }}
-                >
-                  <Popover
-                    placement="bottom"
-                    trigger="click"
-                    content={
-                      <SpaceControlPopover
-                        setOpenAddWorkspaceModal={setShowAddSpaceModal}
-                        setOpenWorkspaceControl={setOpenWorkspaceControl}
-                      />
-                    }
-                    open={isOpenWorkspaceControl}
-                    onOpenChange={() => setOpenWorkspaceControl((prev) => !prev)}
-                  >
-                    <EllipsisOutlined />
-                  </Popover>
-                </span>
-                <span
-                  style={{
-                    display: "inline-block",
-                    cursor: "pointer",
-                  }}
-                  onClick={() => setSearchSpace((prev) => !prev)}
-                >
-                  <SearchOutlined />
-                </span>
-                <span
-                  style={{
-                    display: "inline-block",
-                    cursor: "pointer",
-                  }}
-                  onClick={() => setShowAddSpaceModal(true)}
-                >
-                  <PlusOutlined />
-                </span>
-              </div>
-            </div>
-          ) : (
-            <SearchSpace setSearchSpace={setSearchSpace} />
-          )}
-          <DnDMenu setCreateFolderData={setCreateFolderData} collapsed={collapsed} />
-        </div>
+        <PopupSpaceMenu
+          collapsed={collapsed}
+          isOpenWorkspaceControl={isOpenWorkspaceControl}
+          searchSpace={searchSpace}
+          setCreateFolderData={setCreateFolderData}
+          setOpenWorkspaceControl={setOpenWorkspaceControl}
+          setSearchSpace={setSearchSpace}
+          setShowAddSpaceModal={setShowAddSpaceModal}
+          setToggleOpenSpaceMenu={setToggleOpenSpaceMenu}
+          toggleOpenSpaceMenu={toggleOpenSpaceMenu}
+          excludeRef={spaceIconRef}
+        />
       )}
       <Layout>
         <Header className={classes.headerContainer}>
@@ -253,6 +231,7 @@ const IndexPage = () => {
                     className={classes.accountControlOption}
                     onClick={() => {
                       dispatch(logoutThunk());
+                      setIsAuthen(null);
                     }}
                   >
                     Logout
@@ -265,13 +244,13 @@ const IndexPage = () => {
           </Popover>
         </Header>
         <Content style={{ margin: "0 16px" }}>
-          <Breadcrumb style={{ margin: "16px 0" }}>
+          {/* <Breadcrumb style={{ margin: "16px 0" }}>
             <Breadcrumb.Item>User</Breadcrumb.Item>
             <Breadcrumb.Item>Bill</Breadcrumb.Item>
-          </Breadcrumb>
+          </Breadcrumb> */}
           <div
             style={{
-              padding: 24,
+              padding: "24px 0px",
               minHeight: 360,
             }}
           >
@@ -295,6 +274,10 @@ const useStyles = createUseStyles({
       background: "white",
       color: "black",
     },
+    "& .ant-layout-header": {
+      maxHeight: 51,
+      padding: "0 18px",
+    },
   },
   headerContainer: {
     background: "white",
@@ -306,8 +289,7 @@ const useStyles = createUseStyles({
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
-    paddingBottom: "14px",
-    borderBottom: "1px solid #ccc",
+    // borderBottom: "1px solid #ccc",
   },
   accountControlContainer: {
     listStyle: "none",
@@ -339,7 +321,7 @@ const useStyles = createUseStyles({
   },
 
   menuAfterCollapseContainer: {
-    paddingTop: 10,
+    paddingTop: 20,
     paddingLeft: 10,
     paddingRight: 10,
     background: "white",
@@ -348,9 +330,11 @@ const useStyles = createUseStyles({
     zIndex: 1,
     position: "fixed",
     left: "80px",
+    top: 0,
     borderLeft: "0.5px solid #ccc",
     animationName: "$out-to-in",
     animationDuration: "0.5s",
+    borderTop: "0.5px solid #ccc",
   },
   collapseIconContainer: {
     display: "flex",
