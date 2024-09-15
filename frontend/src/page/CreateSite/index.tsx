@@ -4,7 +4,6 @@ import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import { signSiteForUser } from "../../redux/features/site/siteThunk";
 import { useState } from "react";
 import { toast } from "react-toastify";
-import { useNavigate } from "react-router-dom";
 
 const CreateSite = () => {
   const classes = useStyles();
@@ -12,7 +11,6 @@ const CreateSite = () => {
 
   const dispatch = useAppDispatch();
   const [nameSite, setNameSite] = useState("");
-  const naviagte = useNavigate();
 
   const handleCreateSite = async () => {
     try {
