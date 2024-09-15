@@ -5,7 +5,7 @@ import SearchSpace from "./SearchSpace";
 import { Popover } from "antd";
 import SpaceControlPopover from "./SpaceControlPopover";
 import { FC, RefObject, useRef } from "react";
-import useOnClickOutside from "../../../hooks/useOnClickOutside";
+import useOnClickOutside from "../../../../hooks/useOnClickOutside";
 
 type PopupSpaceMenuProps = {
   searchSpace: boolean;

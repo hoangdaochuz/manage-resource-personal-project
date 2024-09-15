@@ -13,6 +13,7 @@ import ConfirmEmailNoti from "./page/Authenticate/components/ConfirmEmailNoti.ts
 import { QueryClient, QueryClientProvider } from "react-query";
 import AuthGoogleRedirect from "./page/Authenticate/components/AuthGoogleRedirect.tsx";
 import ResetPassword from "./page/Authenticate/components/ResetPassword.tsx";
+import CreateSite from "./page/CreateSite/index.tsx";
 
 const router = createBrowserRouter([
   {
@@ -31,6 +32,7 @@ const router = createBrowserRouter([
   { path: "/confirm-noti", element: <ConfirmEmailNoti /> },
   { path: "auth/google-redirect", element: <AuthGoogleRedirect /> },
   { path: "/reset-password", element: <ResetPassword /> },
+  { path: "/create-site", element: <CreateSite /> },
 ]);
 const queryClient = new QueryClient();
 ReactDOM.createRoot(document.getElementById("root")!).render(

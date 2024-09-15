@@ -11,7 +11,7 @@ function App() {
     dispatch(initApp());
   }, [dispatch]);
   return (
-    <div>
+    <div style={{ position: "relative" }}>
       {/* <Button
         onClick={() => {
           dispatch(logoutThunk());

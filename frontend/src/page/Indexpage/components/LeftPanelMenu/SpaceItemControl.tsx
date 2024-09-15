@@ -1,16 +1,17 @@
-import { DeleteOutlined, EditOutlined, ExclamationCircleFilled } from "@ant-design/icons";
+import { DeleteOutlined, EditOutlined, ExclamationCircleFilled, PlusOutlined } from "@ant-design/icons";
+import confirm from "antd/es/modal/confirm";
 import { FC, useState } from "react";
 import { createUseStyles } from "react-jss";
-import { useAppDispatch } from "../../../redux/hooks";
 import { toast } from "react-toastify";
-import confirm from "antd/es/modal/confirm";
-import EditFolderModal from "../../../components/modals/EditFolderModal";
-import { deleteProject } from "../../../redux/features/project/projectThunk";
-export type ProjectItemControlProps = {
+import { useAppDispatch } from "../../../../redux/hooks";
+import { deleteWorkspace } from "../../../../redux/features/workspace/workspaceThunk";
+import EditWorkspaceModal from "../../../../components/modals/EditWorkspaceModal";
+
+type SpaceItemControlProps = {
   workspaceId: number;
-  projectId: number;
 };
-const ProjectItemControl: FC<ProjectItemControlProps> = ({ projectId, workspaceId }) => {
+
+const SpaceItemControl: FC<SpaceItemControlProps> = ({ workspaceId }) => {
   const [isOpenEditModal, setOpenEditModal] = useState(false);
 
   const spaceItems = [
@@ -18,6 +19,11 @@ const ProjectItemControl: FC<ProjectItemControlProps> = ({ projectId, workspaceI
       key: "rename",
       label: "Rename",
       icon: <EditOutlined />,
+    },
+    {
+      key: "create",
+      label: "Create new",
+      icon: <PlusOutlined />,
     },
     {
       key: "delete",
@@ -30,11 +36,11 @@ const ProjectItemControl: FC<ProjectItemControlProps> = ({ projectId, workspaceI
   const dispatch = useAppDispatch();
   const showConfirmDeletePromise = async () => {
     confirm({
-      title: "Delete folder?",
+      title: "Delete workspace?",
       icon: <ExclamationCircleFilled style={{ color: "red" }} />,
-      content: "Do you want to delete this folder?",
+      content: "Do you want to delete this workspace?",
       onOk() {
-        dispatch(deleteProject({ projectId, workspaceId }))
+        dispatch(deleteWorkspace(workspaceId))
           .then(() => {
             toast.success("Delete successfully");
           })
@@ -67,24 +73,20 @@ const ProjectItemControl: FC<ProjectItemControlProps> = ({ projectId, workspaceI
       <div>
         {spaceItems.map((item) => {
           return (
-            <div className={classes.projectItemControlItem} onClick={() => handleControlOption(item.key)}>
+            <div className={classes.spaceItemControlItem} onClick={() => handleControlOption(item.key)}>
               <span>{item.icon}</span>
               <h2>{item.label}</h2>
             </div>
           );
         })}
       </div>
-      <EditFolderModal
-        isOpen={isOpenEditModal}
-        setOpen={setOpenEditModal}
-        workspaceId={workspaceId}
-        projectId={projectId}
-      />
+      <EditWorkspaceModal isOpen={isOpenEditModal} setOpen={setOpenEditModal} workspaceId={workspaceId} />
     </>
   );
 };
+
 const useStyles = createUseStyles({
-  projectItemControlItem: {
+  spaceItemControlItem: {
     display: "flex",
     alignItems: "center",
     gap: "0 5px",
@@ -97,4 +99,4 @@ const useStyles = createUseStyles({
   },
 });
 
-export default ProjectItemControl;
+export default SpaceItemControl;

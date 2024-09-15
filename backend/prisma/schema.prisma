@@ -57,3 +57,9 @@ model Team{
   workspace Workspace @relation(fields: [workspaceId], references: [id])
   user User @relation(fields: [owner],references: [id])
 }
+
+model Site{
+  id Int @id @default(autoincrement())
+  name String
+  owner Int
+}

@@ -5,11 +5,15 @@ import { FC } from "react";
 import { DragDropContext, DropResult, Droppable } from "react-beautiful-dnd";
 import SpaceItemControl from "./SpaceItemControl";
 import DnDParentMenuItem from "./DnDParentMenuItem";
-import { useAppDispatch, useAppSelector } from "../../../redux/hooks";
-import { WorkspaceItem, setProjectOfWorkspace, setWorkspaces } from "../../../redux/features/workspace/workspaceSlice";
 import { useMutation } from "react-query";
-import { projectApi, workspaceApi } from "../../../services";
 import ProjectItemControl from "./ProjectItemControl";
+import { useAppDispatch, useAppSelector } from "../../../../redux/hooks";
+import { projectApi, workspaceApi } from "../../../../services";
+import {
+  setProjectOfWorkspace,
+  setWorkspaces,
+  WorkspaceItem,
+} from "../../../../redux/features/workspace/workspaceSlice";
 
 export type CreateFolderData = {
   isShowCreateFolderModal: boolean;

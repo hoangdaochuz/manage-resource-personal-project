@@ -1,10 +1,10 @@
 import { Button, Form, Input, Modal } from "antd";
 import { FC } from "react";
 import { createUseStyles } from "react-jss";
-import { CreateFolderData } from "../../page/Indexpage/components/DnDMenu";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import { createProjet } from "../../redux/features/project/projectThunk";
 import { toast } from "react-toastify";
+import { CreateFolderData } from "../../page/Indexpage/components/LeftPanelMenu/DnDMenu";
 type CreateFolderModalProps = {
   data: CreateFolderData;
   setCreateFolderData: (arg: CreateFolderData) => void;

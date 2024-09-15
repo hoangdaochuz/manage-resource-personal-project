@@ -1,7 +1,7 @@
 import { SearchOutlined } from "@ant-design/icons";
 import { Input } from "antd";
 import { FC, useRef } from "react";
-import useOnClickOutside from "../../../hooks/useOnClickOutside";
+import useOnClickOutside from "../../../../hooks/useOnClickOutside";
 type SearchSpaceProps = {
   setSearchSpace: (arg: boolean) => void;
 };

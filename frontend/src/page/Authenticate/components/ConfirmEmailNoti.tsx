@@ -29,7 +29,9 @@ const ConfirmEmailNoti = () => {
       toast.error("Some thing went wrong");
     }
     if (data?.status === 201) {
-      navigate("/login");
+      console.log("🚀 ~ useEffect ~ data:", data);
+      navigate("/create-site");
+      // navigate("/login");
     }
   }, [isError, data, navigate]);
 

@@ -10,22 +10,21 @@ import {
   UserOutlined,
   AppstoreOutlined,
 } from "@ant-design/icons";
-import { Avatar, Image, Layout, Menu, Popover, Tooltip } from "antd";
+import { Image, Layout, Menu, Popover, Tooltip } from "antd";
 import Sider from "antd/es/layout/Sider";
-import { Content, Footer, Header } from "antd/es/layout/layout";
+import { Content, Footer } from "antd/es/layout/layout";
 import { ItemType, MenuItemType } from "antd/es/menu/hooks/useItems";
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { createUseStyles } from "react-jss";
-import SpaceControlPopover from "./components/SpaceControlPopover";
-import SearchSpace from "./components/SearchSpace";
 import AddWorkspaceModal from "../../components/modals/AddWorkspaceModal";
 import CreateFolderModal from "../../components/modals/CreateFolderModal";
-import DnDMenu, { CreateFolderData } from "./components/DnDMenu";
-import { useAppDispatch, useAppSelector } from "../../redux/hooks";
-import { logoutThunk } from "../../redux/features/auth/authThunk";
-import { useNavigate } from "react-router-dom";
-import PopupSpaceMenu from "./components/PopupSpaceMenu";
 import UserManagement from "../UserManagement";
+import SpaceControlPopover from "./components/LeftPanelMenu/SpaceControlPopover";
+import SearchSpace from "./components/LeftPanelMenu/SearchSpace";
+import DnDMenu, { CreateFolderData } from "./components/LeftPanelMenu/DnDMenu";
+import PopupSpaceMenu from "./components/LeftPanelMenu/PopupSpaceMenu";
+import HeaderLayout from "./components/Layout/HeaderLayout";
+import Profile from "../Profile";
 
 const IndexPage = () => {
   const [searchSpace, setSearchSpace] = useState(false);
@@ -37,17 +36,7 @@ const IndexPage = () => {
   const [isOpenWorkspaceControl, setOpenWorkspaceControl] = useState<boolean>(false);
   const [toggleOpenSpaceMenu, setToggleOpenSpaceMenu] = useState<boolean>(false);
   const classes = useStyles();
-  const dispatch = useAppDispatch();
   const spaceIconRef = useRef(null);
-
-  const navigate = useNavigate();
-  const { user } = useAppSelector((state) => state.auth);
-  const [isAuthen, setIsAuthen] = useState(localStorage.getItem("accessToken"));
-  useEffect(() => {
-    if (!user && !isAuthen) {
-      navigate("/login", { replace: true });
-    }
-  }, [user, isAuthen, navigate]);
 
   const _items = [
     {
@@ -218,36 +207,8 @@ const IndexPage = () => {
         />
       )}
       <Layout>
-        <Header className={classes.headerContainer}>
-          <Popover
-            placement="bottom"
-            trigger="click"
-            overlayClassName={classes.popoverContainer}
-            content={
-              <div>
-                <ul className={classes.accountControlContainer}>
-                  <li className={classes.accountControlOption}>My profile</li>
-                  <li
-                    className={classes.accountControlOption}
-                    onClick={() => {
-                      dispatch(logoutThunk());
-                      setIsAuthen(null);
-                    }}
-                  >
-                    Logout
-                  </li>
-                </ul>
-              </div>
-            }
-          >
-            <Avatar size="large" icon={<UserOutlined />} style={{ cursor: "pointer" }} />
-          </Popover>
-        </Header>
+        <HeaderLayout />
         <Content style={{ margin: "0 16px" }}>
-          {/* <Breadcrumb style={{ margin: "16px 0" }}>
-            <Breadcrumb.Item>User</Breadcrumb.Item>
-            <Breadcrumb.Item>Bill</Breadcrumb.Item>
-          </Breadcrumb> */}
           <div
             style={{
               padding: "24px 0px",
@@ -259,6 +220,7 @@ const IndexPage = () => {
         </Content>
         <Footer style={{ textAlign: "center" }}>Ant Design ©{new Date().getFullYear()} Created by Ant UED</Footer>
       </Layout>
+      <Profile />
       <AddWorkspaceModal isOpen={isShowAddSpaceModal} setOpen={setShowAddSpaceModal} />
       <CreateFolderModal data={createFolderData} setCreateFolderData={setCreateFolderData} />
     </Layout>
@@ -279,32 +241,11 @@ const useStyles = createUseStyles({
       padding: "0 18px",
     },
   },
-  headerContainer: {
-    background: "white",
-    display: "flex",
-    justifyContent: "right",
-    alignItems: "center",
-  },
   logoContainer: {
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
     // borderBottom: "1px solid #ccc",
-  },
-  accountControlContainer: {
-    listStyle: "none",
-  },
-  accountControlOption: {
-    padding: "5px 12px",
-    cursor: "pointer",
-    "&:hover": {
-      backgroundColor: "#ccc",
-    },
-  },
-  popoverContainer: {
-    "& .ant-popover-inner": {
-      padding: "12px 0px",
-    },
   },
   menuContainer: {
     "& .ant-menu-submenu:hover.menu-sub-menuitem-control": {
