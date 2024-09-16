@@ -10,6 +10,7 @@ function App() {
   useEffect(() => {
     dispatch(initApp());
   }, [dispatch]);
+  console.log("Hellooooooo------->>>>>>>");
   return (
     <div style={{ position: "relative" }}>
       {/* <Button
