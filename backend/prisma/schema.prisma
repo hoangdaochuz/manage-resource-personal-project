@@ -31,6 +31,7 @@ model Workspace{
   name String
   owner Int  //
   order Int @default(autoincrement())
+  siteId Int
   projects Project[]
   teams Team[]
   user User @relation(fields: [owner], references: [id])

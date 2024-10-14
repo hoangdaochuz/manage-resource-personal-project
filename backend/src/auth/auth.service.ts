@@ -76,6 +76,7 @@ export class AuthService {
       isActive: false,
       isDeleted: false,
       isVerified: false,
+      loginType: 'normal',
     } as CreateUserDto);
     // create token
     const tokens = await this.getTokens(user.id, user.email);

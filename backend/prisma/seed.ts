@@ -23,6 +23,7 @@ async function main() {
       name: 'Workspace 1',
       owner: 1,
       order: 1,
+      siteId: -1,
     },
   });
 

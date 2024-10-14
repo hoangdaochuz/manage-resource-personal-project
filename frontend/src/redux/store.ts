@@ -4,6 +4,7 @@ import { authApi } from "./services/auth/authApi";
 import appReducer from "./features/app/appSlice";
 import workspaceReducer from "./features/workspace/workspaceSlice";
 import projectReducer from "./features/project/projectSlice";
+import siteReducer from "./features/site/siteSlice";
 export const store = configureStore({
   reducer: {
     app: appReducer,
@@ -11,6 +12,7 @@ export const store = configureStore({
     [authApi.reducerPath]: authApi.reducer,
     workspace: workspaceReducer,
     project: projectReducer,
+    site: siteReducer,
   },
   devTools: import.meta.env.NODE_ENV !== "production",
   middleware: (getDefaultMiddleware) => getDefaultMiddleware({}).concat([]),

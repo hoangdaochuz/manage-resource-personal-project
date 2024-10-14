@@ -16,6 +16,9 @@ import { SearchSiteDTO } from './dto/search-site.dto';
 import { CreateSiteDTO } from './dto/create-site.dto';
 import { AccessTokenGuard } from 'src/auth/guard/accessToken.guard';
 import { SiteEntity } from './entities/site.eintity';
+import { MultipleGuardsReferences } from 'src/guards/MultipleGuardsReferences';
+import { GoogleOAuthGuard } from 'src/auth/guard/google-oauth.guard';
+import { MultipleAuthorizeGuard } from 'src/guards/multipleAuthorizeGuard';
 
 @Controller('api/v1/site')
 @ApiTags('Site')
@@ -29,13 +32,17 @@ export class SiteController {
   }
 
   @Get('/id/:id')
-  @UseGuards(AccessTokenGuard)
+  // @MultipleGuardsReferences(AccessTokenGuard, GoogleOAuthGuard)
+  // @UseGuards(MultipleAuthorizeGuard)
   @ApiOkResponse({ type: SiteEntity })
-  getSiteById(@Param('id', ParseIntPipe) id: number) {
-    return this.siteService.getSitebyIdService(id);
+  getSiteById(
+    @Param('id', ParseIntPipe) id: number,
+    @Query('ownerId', ParseIntPipe) ownerId: number,
+  ) {
+    return this.siteService.getSitebyIdService(id, ownerId);
   }
   @Get('/owner/:ownerId')
-  @UseGuards(AccessTokenGuard)
+  // @UseGuards(AccessTokenGuard)
   @ApiOkResponse({ type: SiteEntity })
   getSitesByOwner(@Param('ownerId', ParseIntPipe) ownerId: number) {
     return this.siteService.getSitesByOwnerService(ownerId);
@@ -56,7 +63,7 @@ export class SiteController {
   }
 
   @Post()
-  @UseGuards(AccessTokenGuard)
+  // @UseGuards(AccessTokenGuard)
   @ApiCreatedResponse({ type: SiteEntity })
   createSite(@Body() createSiteDTO: CreateSiteDTO) {
     return this.siteService.createSiteService(createSiteDTO);

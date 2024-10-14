@@ -25,4 +25,9 @@ export class CreateWorkspaceDto {
   @IsNumber()
   @IsOptional()
   order: number;
+
+  @ApiProperty()
+  @IsNumber()
+  @IsOptional()
+  siteId: number;
 }

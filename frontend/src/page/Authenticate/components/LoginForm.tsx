@@ -6,6 +6,8 @@ import { signinThunk } from "../../../redux/features/auth/authThunk";
 import { useEffect } from "react";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import { siteApi } from "../../../services";
+import { Site } from "../../../redux/features/site/siteSlice";
 
 const LoginForm = () => {
   const classes = useStyle();
@@ -22,15 +24,30 @@ const LoginForm = () => {
   };
 
   useEffect(() => {
-    const accessToken = localStorage.getItem("accessToken");
-    if (accessToken) navigate("/", { replace: true });
+    (async () => {
+      const accessToken = localStorage.getItem("accessToken");
+      const userId = localStorage.getItem("userId");
+      const currSiteId = localStorage.getItem("siteId");
 
-    if (isSuccess && user) {
-      toast.success("Login successfully");
-      navigate("/", { replace: true });
-    } else {
-      toast.error((error as Error).message);
-    }
+      if (isSuccess && user) {
+        toast.success("Login successfully");
+        const sitesOfUserRes = await siteApi.getSitesOfUser(Number(userId));
+        const sitesOfUser = sitesOfUserRes.data;
+        if (!(sitesOfUser || []).length) {
+          navigate("/create-site");
+        } else if (
+          (sitesOfUser || []).length &&
+          (!(sitesOfUser || []).find((item: Site) => item.id === Number(currSiteId)) || !currSiteId)
+        ) {
+          navigate(`/site/${sitesOfUser[0].id}`);
+          localStorage.setItem("siteId", sitesOfUser[0].id);
+        } else {
+          navigate(`/site/${currSiteId}`);
+        }
+      } else {
+        toast.error((error as Error).message);
+      }
+    })();
   }, [isError, isSuccess, error, user, navigate]);
 
   return (

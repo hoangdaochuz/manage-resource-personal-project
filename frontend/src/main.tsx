@@ -14,10 +14,11 @@ import { QueryClient, QueryClientProvider } from "react-query";
 import AuthGoogleRedirect from "./page/Authenticate/components/AuthGoogleRedirect.tsx";
 import ResetPassword from "./page/Authenticate/components/ResetPassword.tsx";
 import CreateSite from "./page/CreateSite/index.tsx";
+import NotFoundSite from "./page/NotFound/index.tsx";
 
 const router = createBrowserRouter([
   {
-    path: "/",
+    path: "/site/:id",
     element: <App />,
   },
   {
@@ -33,6 +34,7 @@ const router = createBrowserRouter([
   { path: "auth/google-redirect", element: <AuthGoogleRedirect /> },
   { path: "/reset-password", element: <ResetPassword /> },
   { path: "/create-site", element: <CreateSite /> },
+  { path: "/not-found-site", element: <NotFoundSite /> },
 ]);
 const queryClient = new QueryClient();
 ReactDOM.createRoot(document.getElementById("root")!).render(

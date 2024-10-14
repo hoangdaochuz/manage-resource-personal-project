@@ -16,6 +16,8 @@ type AddWorkspacePayload = {
 const AddWorkspaceModal: FC<AddWorkspaceModalProps> = ({ isOpen, setOpen }) => {
   const { workspaces, isLoading } = useAppSelector((state) => state.workspace);
   const { user } = useAppSelector((state) => state.auth);
+  const { site } = useAppSelector((state) => state.site);
+
   const dispatch = useAppDispatch();
 
   const handleAddWorkspace = (data: AddWorkspacePayload) => {
@@ -24,6 +26,7 @@ const AddWorkspaceModal: FC<AddWorkspaceModalProps> = ({ isOpen, setOpen }) => {
         name: data.spacename,
         order: (workspaces.length + 1) * 100,
         owner: user?.id,
+        siteId: site?.id,
       })
     ).then(() => {
       setOpen(false);

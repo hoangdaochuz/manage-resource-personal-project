@@ -4,9 +4,9 @@ import { workspaceApi } from "../../../services";
 
 export const getMyWorkspaces = createAsyncThunk(
   "workspace/getMyWorkspace",
-  async (userId: number, { rejectWithValue }) => {
+  async ({ userId, siteId }: { userId: number; siteId: number }, { rejectWithValue }) => {
     try {
-      const response = await workspaceApi.getMyWorkspace(userId);
+      const response = await workspaceApi.getMyWorkspace(userId, siteId);
       return response.data;
     } catch (e) {
       if (axios.isAxiosError(e)) {

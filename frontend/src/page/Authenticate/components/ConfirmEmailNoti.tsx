@@ -5,6 +5,8 @@ import { Spin } from "antd";
 import { useEffect } from "react";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import { useAppDispatch } from "../../../redux/hooks";
+import { setUserInfo } from "../../../redux/features/auth/authSlice";
 
 const ConfirmEmailNoti = () => {
   const classes = useStyles();
@@ -12,6 +14,7 @@ const ConfirmEmailNoti = () => {
   const urlParams = new URLSearchParams(queryString);
   const token = urlParams.get("token");
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
   const confirmEmailFunc = async () => {
     if (token) {
       const data = await authApi.confirmEmail(token);
@@ -30,10 +33,11 @@ const ConfirmEmailNoti = () => {
     }
     if (data?.status === 201) {
       console.log("🚀 ~ useEffect ~ data:", data);
+      dispatch(setUserInfo(data.data));
       navigate("/create-site");
       // navigate("/login");
     }
-  }, [isError, data, navigate]);
+  }, [isError, data, navigate, dispatch]);
 
   return isLoading || isFetching ? (
     <Spin size="large" />

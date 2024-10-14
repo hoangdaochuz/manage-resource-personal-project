@@ -14,4 +14,6 @@ export class WorkspaceEntity implements Workspace {
   teamIds: number[];
   @ApiProperty()
   order: number;
+  @ApiProperty()
+  siteId: number;
 }

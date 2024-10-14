@@ -44,6 +44,7 @@ export const logoutThunk = createAsyncThunk("auth/logout", async (_, { dispatch,
   try {
     const rootState = getState() as RootState;
     const user = rootState.auth.user;
+    console.log("🚀 ~ logoutThunk ~ user:", user);
     if (!user) return;
     if (user.loginType === "normal") {
       await authApi.logout();

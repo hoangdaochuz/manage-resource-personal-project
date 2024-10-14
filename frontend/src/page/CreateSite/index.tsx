@@ -2,29 +2,45 @@ import { Button, Input } from "antd";
 import { createUseStyles } from "react-jss";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import { signSiteForUser } from "../../redux/features/site/siteThunk";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
+import eventBus, { ACTIONS } from "../../eventBus";
+import { setUserInfo } from "../../redux/features/auth/authSlice";
+import { useNavigate } from "react-router-dom";
 
 const CreateSite = () => {
   const classes = useStyles();
   const currentUser = useAppSelector((state) => state.auth.user);
 
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
   const [nameSite, setNameSite] = useState("");
+  console.log("🚀 ~ CreateSite ~ currentUser:", currentUser);
+  const handleNavigateCreateSite = (data: object) => {
+    dispatch(setUserInfo(data));
+  };
 
   const handleCreateSite = async () => {
     try {
       if (currentUser?.id) {
         const createdSite = await dispatch(signSiteForUser({ name: nameSite, owner: currentUser?.id })).unwrap();
         console.log("🚀 ~ handleCreateSite ~ createdSite:", createdSite);
+        localStorage.setItem("siteId", createdSite?.id);
         toast.success("Sign site successfully");
+        navigate("/login");
       }
-      // naviagte("/");
     } catch (err) {
       console.error(err);
       toast.error("Sign site fail");
     }
   };
+
+  useEffect(() => {
+    eventBus.on(ACTIONS.NAVIGATE_CREATE_SITE, handleNavigateCreateSite);
+    return () => {
+      eventBus.off(ACTIONS.NAVIGATE_CREATE_SITE, handleNavigateCreateSite);
+    };
+  }, []);
 
   return (
     <div className={classes.createSiteContainer}>
@@ -54,7 +70,7 @@ const CreateSite = () => {
           </div>
         </div>
         <div className={classes.createFooter}>
-          <Button type="primary" size="large" onClick={handleCreateSite}>
+          <Button type="primary" size="large" onClick={handleCreateSite} disabled={!nameSite || !currentUser}>
             Submit
           </Button>
         </div>

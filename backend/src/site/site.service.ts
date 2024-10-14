@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { SearchSiteDTO } from './dto/search-site.dto';
 import { Prisma } from '@prisma/client';
@@ -11,12 +11,20 @@ export class SiteService {
     return this.prismaService.site.findMany();
   }
 
-  getSitebyIdService(id: number) {
-    return this.prismaService.site.findUnique({
+  async getSitebyIdService(id: number, ownerId: number) {
+    const siteInfo = await this.prismaService.site.findUnique({
       where: {
         id,
+        owner: ownerId,
       },
     });
+    console.log('🚀 ~ SiteService ~ getSitebyIdService ~ siteInfo:', siteInfo);
+    if (!siteInfo) {
+      throw new NotFoundException(
+        `You don't have permission the access this site or maybe it was deleted`,
+      );
+    }
+    return siteInfo;
   }
   getSitesByOwnerService(ownerId: number) {
     return this.prismaService.site.findMany({

@@ -30,9 +30,9 @@ export class WorkspaceService {
   }
 
   // [GET] get my workspace
-  getMyWorkspaces(userId: number) {
+  getMyWorkspaces(userId: number, siteId: number) {
     return this.prisma.workspace.findMany({
-      where: { owner: userId },
+      where: { owner: userId, siteId },
       include: { projects: true },
       orderBy: {
         order: 'asc',

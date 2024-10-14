@@ -41,11 +41,14 @@ export class WorkspaceController {
     return this.workspaceService.getWorkspaceById(id);
   }
 
-  @Get('owner/:userId')
+  @Get('owner/:userId/site/:siteId')
   @ApiResponse({ type: WorkspaceEntity })
-  @UseGuards(AccessTokenGuard)
-  getMyWorkspaces(@Param('userId', ParseIntPipe) userId: number) {
-    return this.workspaceService.getMyWorkspaces(userId);
+  // @UseGuards(AccessTokenGuard)
+  getMyWorkspaces(
+    @Param('userId', ParseIntPipe) userId: number,
+    @Param('siteId', ParseIntPipe) siteId: number,
+  ) {
+    return this.workspaceService.getMyWorkspaces(userId, siteId);
   }
 
   @Post('search')
